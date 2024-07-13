@@ -1,5 +1,6 @@
 import db from '../dist/db/models/index.js';
 import bcrypt from 'bcrypt';
+import { Op } from "sequelize";
 
 const createUser = async (req) => {
     const {
@@ -54,6 +55,17 @@ const getUserById = async (id) => {
     };
 }
 
+const getAllUsers = async () => {
+    return {
+        code: 200,
+        message: await db.User.findAll({
+            where: {
+                status: true,
+            },
+        }),
+    };
+};
+
 const updateUser = async (req) => {
     const user = db.User.findOne({
         where: {
@@ -107,4 +119,5 @@ export default {
     getUserById,
     updateUser,
     deleteUser,
+    getAllUsers,
 }

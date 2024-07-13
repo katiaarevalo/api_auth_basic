@@ -12,6 +12,25 @@ router.post('/create', async (req, res) => {
 });
 
 router.get(
+    "/getAllUsers",
+    [AuthMiddleware.validateToken, UserMiddleware.hasPermissions],
+    async (req, res) => {
+      const response = await UserService.getAllUsers();
+      res.status(response.code).json(response.message);
+    }
+  );
+
+
+  router.get(
+    "/findUsers",
+    [AuthMiddleware.validateToken, UserMiddleware.hasPermissions],
+    async (req, res) => {
+        const response = await UserService.findUsers(req);
+        res.status(response.code).json(response.message);
+    }
+)  
+
+router.get(
     '/:id',
     [
         NumberMiddleware.isNumber,
