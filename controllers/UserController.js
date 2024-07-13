@@ -21,14 +21,14 @@ router.get(
   );
 
 
-  router.get(
+router.get(
     "/findUsers",
     [AuthMiddleware.validateToken, UserMiddleware.hasPermissions],
     async (req, res) => {
-        const response = await UserService.findUsers(req);
+        const response = await UserService.findUsers(req.query);
         res.status(response.code).json(response.message);
     }
-)  
+); 
 
 router.get(
     '/:id',

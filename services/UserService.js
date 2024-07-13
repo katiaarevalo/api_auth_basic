@@ -89,6 +89,55 @@ const updateUser = async (req) => {
     };
 }
 
+const findUsers = async (queryParams) => {
+    const {
+        deleted,
+        name,
+        loggedInBefore,
+        loggedInAfter
+    } = queryParams;
+
+    const whereClause = {};
+
+    // Filtrar por eliminados si deleted es true
+    if (deleted === 'true') {
+        whereClause.status = false;
+    } else {
+        // Por defecto, buscar solo usuarios activos
+        whereClause.status = true;
+    }
+
+    // Filtrar por nombre (coincidencia parcial o total)
+    if (name) {
+        whereClause.name = {
+            [Op.like]: `%${name}%`
+        };
+    }
+
+    // Filtrar por fecha de inicio de sesión antes de una fecha específica
+    if (loggedInBefore) {
+        whereClause.lastLoggedInAt = {
+            [Op.lt]: new Date(loggedInBefore)
+        };
+    }
+
+    // Filtrar por fecha de inicio de sesión después de una fecha específica
+    if (loggedInAfter) {
+        whereClause.lastLoggedInAt = {
+            [Op.gt]: new Date(loggedInAfter)
+        };
+    }
+
+    const users = await db.User.findAll({
+        where: whereClause
+    });
+
+    return {
+        code: 200,
+        message: users
+    };
+};
+
 const deleteUser = async (id) => {
     /* await db.User.destroy({
         where: {
@@ -117,7 +166,8 @@ const deleteUser = async (id) => {
 export default {
     createUser,
     getUserById,
+    getAllUsers,
     updateUser,
     deleteUser,
-    getAllUsers,
+    findUsers,
 }
